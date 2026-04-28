@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Reel Atlas{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="masthead">
+      <a class="logo" href="{{ url_for('main.home') }}">
+        <span class="logo-mark">◐</span>
+        <span class="logo-text">Reel<em>Atlas</em></span>
+      </a>
+      <nav class="site-nav">
+        <a href="{{ url_for('movies.list_movies') }}">Films</a>
+        <a href="{{ url_for('genres.list_genres') }}">Genres</a>
+        <a href="{{ url_for('movies.compare') }}">Compare</a>
+        <a href="{{ url_for('main.about') }}">About</a>
+      </nav>
+    </div>
+    <div class="rule"></div>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="rule"></div>
+    <div class="footer-inner">
+      <div>
+        <span class="footer-title">Reel Atlas</span>
+        <span class="footer-sub">A reading room for moving pictures.</span>
+      </div>
+      <div class="footer-meta">
+        Built with Flask · CS551P Coursework · Data: TMDB-style schema
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
