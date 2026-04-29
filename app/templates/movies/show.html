@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% from "_macros.html" import film_card %}
+
+{% block title %}{{ movie.title }} — Reel Atlas{% endblock %}
+
+{% block content %}
+<section class="detail-header">
+  <div>
+    <div class="eyebrow">
+      {% for g in movie.genres %}{{ g.name }}{% if not loop.last %} · {% endif %}{% endfor %}
+      {% if not movie.genres %}Uncategorised{% endif %}
+    </div>
+    <h1 class="detail-title">{{ movie.title }}</h1>
+    {% if movie.tagline %}
+      <p class="detail-tagline">“{{ movie.tagline }}”</p>
+    {% endif %}
+    <div class="pill-row">
+      {% for g in movie.genres %}
+        <a class="pill" href="{{ url_for('genres.show_genre', genre_id=g.id) }}">{{ g.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <ul class="spec-list">
+    <li><span>Year</span><span>{{ movie.release_year or '—' }}</span></li>
+    <li><span>Director</span><span>{{ movie.director.name if movie.director else 'Unknown' }}</span></li>
+    <li><span>Runtime</span><span>{{ movie.runtime }} min</span></li>
+    <li><span>Rating</span><span class="big">★ {{ '%.1f' % movie.vote_average }}</span></li>
+    <li><span>Votes</span><span>{{ '{:,}'.format(movie.vote_count) }}</span></li>
+    {% if movie.budget %}
+      <li><span>Budget</span><span>${{ '{:,}'.format(movie.budget) }}</span></li>
+    {% endif %}
+    {% if movie.revenue %}
+      <li><span>Revenue</span><span>${{ '{:,}'.format(movie.revenue) }}</span></li>
+    {% endif %}
+    {% if movie.roi %}
+      <li><span>ROI</span><span>{{ movie.roi }}×</span></li>
+    {% endif %}
+  </ul>
+</section>
+
+<section class="detail-body">
+  <div>
+    <h3>Overview</h3>
+    <p class="overview-text">{{ movie.overview or 'No overview available.' }}</p>
+
+    {% if movie.cast_list %}
+      <h3 style="margin-top:30px;">Cast</h3>
+      <div class="cast-list">
+        {% for name in movie.cast_list %}<span>{{ name }}</span>{% endfor %}
+      </div>
+    {% endif %}
+
+    {% if movie.keyword_list %}
+      <h3 style="margin-top:30px;">Keywords</h3>
+      <div class="keyword-list">
+        {% for k in movie.keyword_list %}<span>{{ k }}</span>{% endfor %}
+      </div>
+    {% endif %}
+
+    {% if movie.companies_list %}
+      <h3 style="margin-top:30px;">Production</h3>
+      <p style="margin:0;color:var(--ink-soft);">
+        {{ movie.companies_list | join(' · ') }}
+      </p>
+    {% endif %}
+  </div>
+
+  <aside>
+    <div class="context-box">
+      <h3>In context</h3>
+      <div class="context-stat">★ {{ '%.1f' % movie.vote_average }}</div>
+      <p style="margin:0;color:var(--ink-soft);font-size:14px;">
+        This film rates higher than {{ '%.0f' % (100 - percentile) }}% of the
+        {{ '{:,}'.format(total) }} films in the catalogue.
+      </p>
+    </div>
+
+    <p style="margin-top:18px;">
+      <a class="pill" href="{{ url_for('movies.compare', a=movie.id) }}">Compare this →</a>
+    </p>
+  </aside>
+</section>
+
+{% if related_by_genre %}
+<h2 class="section-title"><span class="num">→</span> If you liked this</h2>
+<div class="film-grid">
+  {% for m in related_by_genre %}{{ film_card(m) }}{% endfor %}
+</div>
+{% endif %}
+
+{% if related_by_director %}
+<h2 class="section-title"><span class="num">→</span> More from {{ movie.director.name }}</h2>
+<div class="film-grid">
+  {% for m in related_by_director %}{{ film_card(m) }}{% endfor %}
+</div>
+{% endif %}
+{% endblock %}
