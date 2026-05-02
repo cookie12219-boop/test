@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Compare — Reel Atlas{% endblock %}
+
+{% macro spec_pair(label, va, vb, fmt=none) %}
+  <li><span>{{ label }}</span><span>
+    {% if fmt == 'money' %}{% if va %}${{ '{:,}'.format(va) }}{% else %}—{% endif %}
+    {% elif fmt == 'star' %}{% if va %}★ {{ '%.1f' % va }}{% else %}—{% endif %}
+    {% else %}{{ va or '—' }}{% endif %}
+  </span></li>
+  <li><span>{{ label }}</span><span>
+    {% if fmt == 'money' %}{% if vb %}${{ '{:,}'.format(vb) }}{% else %}—{% endif %}
+    {% elif fmt == 'star' %}{% if vb %}★ {{ '%.1f' % vb }}{% else %}—{% endif %}
+    {% else %}{{ vb or '—' }}{% endif %}
+  </span></li>
+{% endmacro %}
+
+{% block content %}
+<div class="eyebrow">Side by Side</div>
+<h1 class="display-title">Compare <em>two films.</em></h1>
+
+{% if not (movie_a and movie_b) %}
+  <p class="lede">Pick two films to place side-by-side. Use the search form below or grab a pair from the suggestions.</p>
+
+  <form class="toolbar" method="get" action="{{ url_for('movies.compare') }}">
+    <label for="a">Film A (id)</label>
+    <input id="a" type="number" name="a" value="{{ movie_a.id if movie_a else '' }}" min="1">
+    <label for="b">Film B (id)</label>
+    <input id="b" type="number" name="b" value="{{ movie_b.id if movie_b else '' }}" min="1">
+    <button type="submit">Compare</button>
+  </form>
+
+  <h2 class="section-title"><span class="num">↘</span> Try one of these</h2>
+  <table class="list-table">
+    <thead><tr><th>Title</th><th>Year</th><th>Rating</th><th>ID</th></tr></thead>
+    <tbody>
+      {% for m in suggestions %}
+        <tr>
+          <td><a href="{{ url_for('movies.show_movie', movie_id=m.id) }}">{{ m.title }}</a></td>
+          <td class="num-cell">{{ m.release_year }}</td>
+          <td class="num-cell">★ {{ '%.1f' % m.vote_average }}</td>
+          <td class="num-cell">{{ m.id }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% else %}
+
+  <div class="compare-grid">
+    <div>
+      <div class="compare-meta">A · {{ movie_a.release_year }}</div>
+      <h2 class="compare-title">
+        <a href="{{ url_for('movies.show_movie', movie_id=movie_a.id) }}">{{ movie_a.title }}</a>
+      </h2>
+      <p style="font-style:italic;color:var(--ink-soft);">
+        dir. {{ movie_a.director.name if movie_a.director else 'Unknown' }}
+      </p>
+      <ul class="spec-list">
+        <li><span>Rating</span><span class="big">★ {{ '%.1f' % movie_a.vote_average }}</span></li>
+        <li><span>Runtime</span><span>{{ movie_a.runtime }} min</span></li>
+        <li><span>Votes</span><span>{{ '{:,}'.format(movie_a.vote_count) }}</span></li>
+        <li><span>Budget</span><span>{% if movie_a.budget %}${{ '{:,}'.format(movie_a.budget) }}{% else %}—{% endif %}</span></li>
+        <li><span>Revenue</span><span>{% if movie_a.revenue %}${{ '{:,}'.format(movie_a.revenue) }}{% else %}—{% endif %}</span></li>
+        <li><span>ROI</span><span>{% if movie_a.roi %}{{ movie_a.roi }}×{% else %}—{% endif %}</span></li>
+        <li><span>Genres</span><span>{{ movie_a.genres | map(attribute='name') | join(', ') }}</span></li>
+      </ul>
+    </div>
+    <div>
+      <div class="compare-meta">B · {{ movie_b.release_year }}</div>
+      <h2 class="compare-title">
+        <a href="{{ url_for('movies.show_movie', movie_id=movie_b.id) }}">{{ movie_b.title }}</a>
+      </h2>
+      <p style="font-style:italic;color:var(--ink-soft);">
+        dir. {{ movie_b.director.name if movie_b.director else 'Unknown' }}
+      </p>
+      <ul class="spec-list">
+        <li><span>Rating</span><span class="big">★ {{ '%.1f' % movie_b.vote_average }}</span></li>
+        <li><span>Runtime</span><span>{{ movie_b.runtime }} min</span></li>
+        <li><span>Votes</span><span>{{ '{:,}'.format(movie_b.vote_count) }}</span></li>
+        <li><span>Budget</span><span>{% if movie_b.budget %}${{ '{:,}'.format(movie_b.budget) }}{% else %}—{% endif %}</span></li>
+        <li><span>Revenue</span><span>{% if movie_b.revenue %}${{ '{:,}'.format(movie_b.revenue) }}{% else %}—{% endif %}</span></li>
+        <li><span>ROI</span><span>{% if movie_b.roi %}{{ movie_b.roi }}×{% else %}—{% endif %}</span></li>
+        <li><span>Genres</span><span>{{ movie_b.genres | map(attribute='name') | join(', ') }}</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="compare-vs"><span>— vs. —</span></div>
+
+  <h2 class="section-title"><span class="num">∑</span> The verdict</h2>
+  <p class="lede">
+    {% if movie_a.vote_average > movie_b.vote_average %}
+      <strong>{{ movie_a.title }}</strong> rates
+      <strong>{{ '%.1f' % (movie_a.vote_average - movie_b.vote_average) }}</strong>
+      stars higher than <strong>{{ movie_b.title }}</strong>.
+    {% elif movie_b.vote_average > movie_a.vote_average %}
+      <strong>{{ movie_b.title }}</strong> rates
+      <strong>{{ '%.1f' % (movie_b.vote_average - movie_a.vote_average) }}</strong>
+      stars higher than <strong>{{ movie_a.title }}</strong>.
+    {% else %}
+      Both films land at exactly <strong>★ {{ '%.1f' % movie_a.vote_average }}</strong>.
+    {% endif %}
+    {% set shared = movie_a.genres | selectattr('id', 'in', movie_b.genres | map(attribute='id') | list) | list %}
+    {% if shared %}
+      They share the
+      <strong>{{ shared | map(attribute='name') | join(', ') }}</strong>
+      {{ 'genres' if shared|length > 1 else 'genre' }}.
+    {% else %}
+      They share no genres — apples and oranges.
+    {% endif %}
+  </p>
+
+  <p style="margin-top:18px;">
+    <a class="pill" href="{{ url_for('movies.compare') }}">Pick a different pair →</a>
+  </p>
+
+{% endif %}
+{% endblock %}
