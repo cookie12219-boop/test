@@ -1,0 +1,39 @@
+{% macro film_card(movie) %}
+  <a class="film-card" href="{{ url_for('movies.show_movie', movie_id=movie.id) }}">
+    <span class="yr">{{ movie.release_year or '—' }}</span>
+    <span class="title">{{ movie.title }}</span>
+    <span class="dir">dir. {{ movie.director.name if movie.director else 'Unknown' }}</span>
+    <span class="meta">
+      <span>{{ movie.genres[0].name if movie.genres else '—' }}</span>
+      <span class="score">★ {{ '%.1f' % movie.vote_average }}</span>
+    </span>
+  </a>
+{% endmacro %}
+
+{% macro render_pagination(page_obj, endpoint, params={}) %}
+  {% if page_obj.pages > 1 %}
+  <nav class="pagination" aria-label="Pagination">
+    {% if page_obj.has_prev %}
+      <a href="{{ url_for(endpoint, page=page_obj.prev_num, **params) }}">← Prev</a>
+    {% else %}
+      <span class="disabled">← Prev</span>
+    {% endif %}
+    {% for p in page_obj.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+      {% if p %}
+        {% if p == page_obj.page %}
+          <span class="current">{{ p }}</span>
+        {% else %}
+          <a href="{{ url_for(endpoint, page=p, **params) }}">{{ p }}</a>
+        {% endif %}
+      {% else %}
+        <span class="disabled">…</span>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <a href="{{ url_for(endpoint, page=page_obj.next_num, **params) }}">Next →</a>
+    {% else %}
+      <span class="disabled">Next →</span>
+    {% endif %}
+  </nav>
+  {% endif %}
+{% endmacro %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Genres — Reel Atlas{% endblock %}
+
+{% block content %}
+<div class="eyebrow">Browse</div>
+<h1 class="display-title">By <em>genre.</em></h1>
+<p class="lede">
+  Each row is a genre with its share of the catalogue and average rating.
+</p>
+
+<table class="list-table">
+  <thead>
+    <tr>
+      <th>Genre</th>
+      <th>Films</th>
+      <th>Avg. rating</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for genre, count, avg in rows %}
+    <tr>
+      <td><a href="{{ url_for('genres.show_genre', genre_id=genre.id) }}">{{ genre.name }}</a></td>
+      <td class="num-cell">{{ count }}</td>
+      <td class="num-cell">★ {{ '%.2f' % (avg or 0) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

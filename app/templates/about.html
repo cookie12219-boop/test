@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="eyebrow">Colophon</div>
+<h1 class="display-title">About <em>this atlas.</em></h1>
+<p class="lede">
+  Reel Atlas is a coursework project for CS551P Advanced Programming at the
+  University of Aberdeen. It is a database-driven Flask application built
+  around an open movie dataset.
+</p>
+
+<h2 class="section-title"><span class="num">01</span> Stack</h2>
+<p>
+  Built with Flask, SQLAlchemy, Jinja2 templates and SQLite. The interface
+  uses pure CSS — no client-side JavaScript, as required by the brief.
+  Tests are written with pytest and run against an in-memory SQLite database.
+</p>
+
+<h2 class="section-title"><span class="num">02</span> Data</h2>
+<p>
+  The dataset follows the schema of the TMDB 5,000 Movie Dataset (a public
+  dataset derived from The Movie Database’s public API). The app loads the
+  CSV into two linked tables: a <em>directors</em> table that owns
+  one-to-many <em>movies</em>, and a many-to-many <em>genres</em> table
+  joined through an association table.
+</p>
+
+<h2 class="section-title"><span class="num">03</span> Code</h2>
+<p>
+  The application is organised into a factory module, blueprint-based
+  routes, a data loader and a small CLI for refreshing the database. Error
+  handlers cover 400, 404 and 500. See <code>README.md</code> in the
+  repository for installation and run instructions.
+</p>
+{% endblock %}

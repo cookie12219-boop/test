@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_macros.html" import film_card, render_pagination %}
+
+{% block title %}{{ genre.name }} — Reel Atlas{% endblock %}
+
+{% block content %}
+<div class="eyebrow">Genre</div>
+<h1 class="display-title">{{ genre.name }}.</h1>
+<p class="lede">
+  {{ total_for_genre }} films in this genre, averaging ★ {{ '%.2f' % avg_rating }}.
+</p>
+
+<div class="film-grid">
+  {% for m in movies %}{{ film_card(m) }}{% endfor %}
+</div>
+
+{{ render_pagination(pagination, 'genres.show_genre', {'genre_id': genre.id}) }}
+{% endblock %}

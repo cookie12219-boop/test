@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "_macros.html" import film_card, render_pagination %}
+
+{% block title %}Films — Reel Atlas{% endblock %}
+
+{% block content %}
+<div class="eyebrow">The Index</div>
+<h1 class="display-title">Films <em>A–Z.</em></h1>
+<p class="lede">
+  {{ '{:,}'.format(pagination.total) }} entries.
+  {% if q %}Filtered by “{{ q }}”.{% endif %}
+</p>
+
+<form class="toolbar" method="get" action="{{ url_for('movies.list_movies') }}">
+  <label for="q">Search</label>
+  <input id="q" type="search" name="q" value="{{ q }}" placeholder="Title or actor">
+  <label for="sort">Sort</label>
+  <select id="sort" name="sort">
+    <option value="rating"      {% if sort=='rating'      %}selected{% endif %}>Rating</option>
+    <option value="popularity"  {% if sort=='popularity'  %}selected{% endif %}>Popularity</option>
+    <option value="year_desc"   {% if sort=='year_desc'   %}selected{% endif %}>Newest</option>
+    <option value="year_asc"    {% if sort=='year_asc'    %}selected{% endif %}>Oldest</option>
+    <option value="title"       {% if sort=='title'       %}selected{% endif %}>Title</option>
+    <option value="revenue"     {% if sort=='revenue'     %}selected{% endif %}>Revenue</option>
+  </select>
+  <button type="submit">Apply</button>
+  <span class="spacer"></span>
+  {% if q or sort != 'rating' %}
+    <a class="pill" href="{{ url_for('movies.list_movies') }}">Clear</a>
+  {% endif %}
+</form>
+
+{% if movies %}
+  <div class="film-grid">
+    {% for m in movies %}{{ film_card(m) }}{% endfor %}
+  </div>
+  {{ render_pagination(pagination, 'movies.list_movies', {'q': q, 'sort': sort}) }}
+{% else %}
+  <p style="margin-top:40px;font-style:italic;color:var(--ink-soft)">
+    No films matched that search.
+  </p>
+{% endif %}
+{% endblock %}

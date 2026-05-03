@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "_macros.html" import film_card %}
+
+{% block content %}
+<section class="hero">
+  <div>
+    <div class="eyebrow">Vol. I · A reading room for moving pictures</div>
+    <h1 class="display-title">A library<br>of <em>cinema</em>,<br>by the numbers.</h1>
+    <p class="lede">
+      Browse {{ '{:,}'.format(total_movies) }} films across {{ total_genres }} genres,
+      from celebrated auteurs to weekend popcorn. Compare two titles
+      side-by-side, place a film in the context of its genre, or simply
+      drift through the index.
+    </p>
+  </div>
+
+  <aside class="hero-meta">
+    <div class="stat">
+      <span>Films catalogued</span>
+      <strong>{{ '{:,}'.format(total_movies) }}</strong>
+    </div>
+    <div class="stat-row">
+      <div class="stat">
+        <span>Directors</span>
+        <strong>{{ total_directors }}</strong>
+      </div>
+      <div class="stat">
+        <span>Genres</span>
+        <strong>{{ total_genres }}</strong>
+      </div>
+    </div>
+  </aside>
+</section>
+
+<h2 class="section-title"><span class="num">01</span> Highest rated</h2>
+<div class="film-grid">
+  {% for m in top_movies %}{{ film_card(m) }}{% endfor %}
+</div>
+
+<h2 class="section-title"><span class="num">02</span> Popular genres</h2>
+<div class="pill-row">
+  {% for genre, count in popular_genres %}
+    <a class="pill" href="{{ url_for('genres.show_genre', genre_id=genre.id) }}">
+      {{ genre.name }} · {{ count }}
+    </a>
+  {% endfor %}
+  <a class="pill accent" href="{{ url_for('genres.list_genres') }}">All genres →</a>
+</div>
+{% endblock %}
