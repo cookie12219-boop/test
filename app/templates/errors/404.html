@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}404 — Reel Atlas{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div class="code">404</div>
+  <p class="msg">The page you’re looking for has slipped off the reel.</p>
+  <a class="pill accent" href="{{ url_for('main.home') }}">Back to the masthead</a>
+</div>
+{% endblock %}

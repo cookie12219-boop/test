@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}500 — Reel Atlas{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div class="code">500</div>
+  <p class="msg">Something broke behind the curtain. We’ve logged it.</p>
+  <a class="pill accent" href="{{ url_for('main.home') }}">Back to the masthead</a>
+</div>
+{% endblock %}
