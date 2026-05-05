@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}400 — Reel Atlas{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div class="code">400</div>
+  <p class="msg">That request didn’t make sense.</p>
+  {% if message %}<p style="color:var(--ink-soft);">{{ message }}</p>{% endif %}
+  <a class="pill accent" href="{{ url_for('main.home') }}">Back to the masthead</a>
+</div>
+{% endblock %}
