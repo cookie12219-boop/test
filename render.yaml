@@ -1,0 +1,24 @@
+# Render Blueprint configuration.
+# Push the repo to GitHub, click "New Blueprint" on Render, point it at
+# the repo, and Render reads this file to create the service.
+#
+# The free tier keeps an ephemeral SQLite database alongside the app -
+# fine for this coursework. For persistence across deploys, mount a Render
+# Disk at /opt/render/project/src/instance and set DATABASE_URL accordingly.
+
+services:
+  - type: web
+    name: reel-atlas
+    env: python
+    plan: free
+    region: frankfurt
+    buildCommand: "pip install -r requirements.txt && python scripts/build_dataset.py"
+    startCommand: "gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60"
+    healthCheckPath: /healthz
+    envVars:
+      - key: FLASK_CONFIG
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.12.4
