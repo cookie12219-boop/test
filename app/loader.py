@@ -76,11 +76,19 @@ def load_dataset(csv_path: str, limit: int | None = None) -> dict:
     genre_cache: dict[str, Genre] = {}
 
     movies_added = 0
+    seen_tmdb_ids = set()  # Track seen IDs to skip duplicates
     with open(csv_path, "r", encoding="utf-8", newline="") as f:
         reader = csv.DictReader(f)
         for idx, row in enumerate(reader):
             if limit is not None and idx >= limit:
                 break
+
+            # Skip duplicate rows (the public TMDB CSV has a few)
+            tmdb_id_raw = (row.get("id") or "").strip()
+            if tmdb_id_raw:
+                if tmdb_id_raw in seen_tmdb_ids:
+                    continue
+                seen_tmdb_ids.add(tmdb_id_raw)
 
             director_name = (row.get("director") or "").strip()
             if not director_name:
