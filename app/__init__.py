@@ -17,6 +17,10 @@ def create_app(config_name: str | None = None) -> Flask:
     app = Flask(__name__, instance_relative_config=False)
     app.config.from_object(get_config(config_name))
 
+    # Ensure the instance folder exists (needed for SQLite on fresh deploys)
+    import os
+    os.makedirs(os.path.join(os.path.dirname(__file__), "..", "instance"), exist_ok=True)
+
     db.init_app(app)
 
     # Register blueprints
