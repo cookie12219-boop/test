@@ -4,7 +4,7 @@ A database-driven Flask web application that catalogues ~5,000 films with
 linked tables for movies, directors, and genres. Built for the
 **CS551P Advanced Programming** module at the University of Aberdeen.
 
-**Live deployment:** _to be filled in after the user deploys to Render_
+**Live deployment:** https://reel-atlas.onrender.com
 (see [Deployment](#deployment) below).
 
 ---
