@@ -50,7 +50,7 @@ def create_app(config_name: str | None = None) -> Flask:
             csv_path = app.config["DATASET_CSV"]
             if os.path.exists(csv_path):
                 app.logger.info("Auto-loading dataset from %s", csv_path)
-                load_dataset(csv_path)
+                load_dataset(csv_path, limit=6500)
 
     return app
 
